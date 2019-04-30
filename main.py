@@ -133,21 +133,21 @@ class TmdbApi:
 
 
 networkLogoUrl = None
-#tmdb = TmdbApi(tmdbApiKey)
-#networkLogoUrl = tmdb.getNetworkLogoFullPath(os.environ.get("sonarr_series_tvdbid"))
+tmdb = TmdbApi(tmdbApiKey)
+networkLogoUrl = tmdb.getNetworkLogoFullPath(os.environ.get("sonarr_series_tvdbid"))
 
 sonarr = SonarrApi(sonarrApiBaseUrl, sonarrApiKey)
-#sonarr.loadData(os.environ.get("sonarr_series_id", ""), os.environ.get("sonarr_episodefile_id", ""), os.environ.get("sonarr_download_id", ""))
+sonarr.loadData(os.environ.get("sonarr_series_id", ""), os.environ.get("sonarr_episodefile_id", ""), os.environ.get("sonarr_download_id", ""))
 
 season = os.environ.get("sonarr_episodefile_seasonnumber", "")
 episode = os.environ.get("sonarr_episodefile_episodenumbers", "")
 
 link = ""
-#tvMaze = TvMazeApi(os.environ.get("sonarr_series_tvmazeid", ""))
-#link = tvMaze.getEpisodeUrl(season, episode)
+tvMaze = TvMazeApi(os.environ.get("sonarr_series_tvmazeid", ""))
+link = tvMaze.getEpisodeUrl(season, episode)
 
 message = SlackMessage(webhook_url)
-message.package("*" +os.environ.get("sonarr_series_title", "") + " - " + season +"x"+ episode +" - " + os.environ.get("sonarr_episodefile_episodetitles") + "* ["+os.environ.get("sonarr_episodefile_quality", "")+"]")
+message.package("*" +os.environ.get("sonarr_series_title", "") + " - " + season +"x"+ episode +" - " + os.environ.get("sonarr_episodefile_episodetitles", "") + "* ["+os.environ.get("sonarr_episodefile_quality", "")+"]")
 message.constructor("`"+ sonarr.indexer +"` " + sonarr.network)
 message.link(link)
 message.iconUrl = networkLogoUrl
@@ -156,16 +156,3 @@ message.save()
 print(message)
 
 message.notify()
-
-
-'''
-
-
-message=":package: ${title}\n:male-construction-worker: \`${sonarrIndexer}\` _${sonarr_episodefile_releasegroup}_ ${sonarrNetwork}\n:books: ${link}"
-
-export sonarr_series_tvdbid=80379; sonarr_series_id=33; export sonarr_download_id=F3D84BC5D6EA74F63493B607EA47DEDEC9F010D7; export sonarr_eventtype=Download; export sonarr_series_tvmazeid=66; export sonarr_episodefile_seasonnumber=1; export sonarr_series_title=TBBT; export sonarr_episodefile_quality=720p; export sonarr_release_indexer=YGGTorrent; export sonarr_episodefile_releasegroup=STRiFE; export sonarr_episodefile_episodetitles=testTitle; export sonarr_episodefile_episodenumbers=5; export sonarr_episodefile_id=906; sh ./newSlack.sh https://hooks.slack.com/services/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 http://62.210.127.219:8989 4ff841b110fc4a4798b7a639c793f832 b52e152da78b388bbfb0e761a985df6a
-
-'''
-
-#message = radarr.generateSlackMessage(os.environ.get("radarr_movie_title", ""), os.environ.get("radarr_moviefile_quality", ""), os.environ.get("radarr_movie_tmdbid", ""), os.environ.get("radarr_moviefile_releasegroup", ""), os.environ.get("radarr_download_id", ""))
-#Slack().notify(message)
