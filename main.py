@@ -29,6 +29,8 @@ class SonarrApi:
         self.apiKey = apiKey
 
     def getEpisodeId(self, seriesId, episodeFileId):
+        if not seriesId or not episodeFileId:
+            return ""
         payload = {"apikey": self.apiKey, "seriesId": seriesId}
         response = requests.get(self.baseUrl + "/episode", params=payload)
         if response.status_code != 200:
@@ -46,7 +48,8 @@ class SonarrApi:
 
 
     def setIndexer(self, episodeId, downloadId):
-        
+        if not episodeId or not downloadId:
+            return
         payload = {"apikey": self.apiKey, "episodeId": episodeId, "sortKey": "date"}
         response = requests.get(self.baseUrl + "/history", params=payload)
         if response.status_code != 200:
@@ -77,6 +80,8 @@ class TvMazeApi:
         self.baseUrl = "http://api.tvmaze.com/shows/"+tvmazeId
     
     def getEpisodeUrl(self, season, number):
+        if not season or not number:
+            return ""
         payload = {"season": season, "number": number}
         response = requests.get(self.baseUrl + "/episodebynumber", params=payload)
         if response.status_code != 200:
