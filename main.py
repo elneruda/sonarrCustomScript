@@ -134,7 +134,7 @@ class TmdbApi:
 
 networkLogoUrl = None
 tmdb = TmdbApi(tmdbApiKey)
-networkLogoUrl = tmdb.getNetworkLogoFullPath(os.environ.get("sonarr_series_tvdbid"))
+networkLogoUrl = tmdb.getNetworkLogoFullPath(os.environ.get("sonarr_series_tvdbid", ""))
 
 sonarr = SonarrApi(sonarrApiBaseUrl, sonarrApiKey)
 sonarr.loadData(os.environ.get("sonarr_series_id", ""), os.environ.get("sonarr_episodefile_id", ""), os.environ.get("sonarr_download_id", ""))
