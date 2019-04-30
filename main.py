@@ -114,7 +114,7 @@ class TmdbApi:
         return dict(next(iter(data.get("tv_results", [])), {})).get("id", None)
 
     def getNetworkLogoPath(self, showId):
-        if showId is None:
+        if showId is None or showId == str(None):
             return ""
         payload = {"api_key": self.apiKey}
         response = requests.get(self.baseURL + "/tv/" + showId, params=payload)
@@ -134,7 +134,7 @@ class TmdbApi:
 
 networkLogoUrl = None
 tmdb = TmdbApi(tmdbApiKey)
-networkLogoUrl = tmdb.getNetworkLogoFullPath(os.environ.get("sonarr_series_tvdbid", ""))
+networkLogoUrl = tmdb.getNetworkLogoFullPath(None)
 
 sonarr = SonarrApi(sonarrApiBaseUrl, sonarrApiKey)
 sonarr.loadData(os.environ.get("sonarr_series_id", ""), os.environ.get("sonarr_episodefile_id", ""), os.environ.get("sonarr_download_id", ""))
