@@ -48,6 +48,9 @@ class SlackMessage(object):
     def __repr__(self):
         return "\n".join(self._message)
 
+    def newLine(self, value):
+        self._message.append(value)
+
     def package(self, value):
         self._package+=value
     
