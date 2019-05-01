@@ -102,7 +102,7 @@ message.package("*" +os.environ.get("sonarr_series_title", "") + " - " + season 
 message.constructor("`"+ sonarr.indexer +"` _" + os.environ.get("sonarr_episodefile_releasegroup", "") + "_ " + sonarr.network)
 message.link(link)
 message.iconUrl = networkLogoUrl
-message.newLine("icon url : " + networkLogoUrl)
 message.save()
+message.newLine("icon url : " + networkLogoUrl)
 
 message.notify()
