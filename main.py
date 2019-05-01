@@ -66,7 +66,7 @@ class TmdbApi:
 
     def getNetworkLogoPath(self, showId):
         if showId is None or showId == str(None):
-            return ""
+            return None
         payload = {"api_key": self.apiKey}
         response = requests.get(self.baseURL + "/tv/" + showId, params=payload)
         if response.status_code != 200:
@@ -80,12 +80,14 @@ class TmdbApi:
     def getNetworkLogoFullPath(self, tmdbId):
         showId = self.getShowId(tmdbId)
         logoPath = self.getNetworkLogoPath(str(showId))
+        if not logoPath:
+            return None
         return self.imageURL+"/"+self.imageSize+logoPath
 
 
 networkLogoUrl = None
 tmdb = TmdbApi(tmdbApiKey)
-networkLogoUrl = tmdb.getNetworkLogoFullPath(None)
+networkLogoUrl = tmdb.getNetworkLogoFullPath(os.environ.get("sonarr_series_tvdbid"))
 
 sonarr = SonarrApi(sonarrApiBaseUrl, sonarrApiKey)
 sonarr.loadData(os.environ.get("sonarr_series_id", ""), os.environ.get("sonarr_episodefile_id", ""), os.environ.get("sonarr_download_id", ""))
@@ -103,6 +105,6 @@ message.constructor("`"+ sonarr.indexer +"` _" + os.environ.get("sonarr_episodef
 message.link(link)
 message.iconUrl = networkLogoUrl
 message.save()
-message.newLine("icon url : " + networkLogoUrl)
+message.newLine("icon url : " + str(networkLogoUrl))
 
 message.notify()
