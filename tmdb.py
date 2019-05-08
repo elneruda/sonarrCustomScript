@@ -1,11 +1,15 @@
 import json
 import requests
+import os
 
 class TmdbApi:
     baseURL = "https://api.themoviedb.org/3"
     imageURL = "http://image.tmdb.org/t/p"
     imageSize = "w185"
     apiKey = ""
+
+    networkName = ""
+    logoPath = ""
 
     def __init__(self, apiKey):
         if apiKey is None:
@@ -36,16 +40,31 @@ class TmdbApi:
                 % (response.status_code, response.text)
             )
         data = dict(json.loads(response.text))
-        return dict(next(iter(data.get("networks", [])), None)).get("logo_path", "")
+        network = dict(next(iter(data.get("networks", [])), None))
+        self.networkName = network.get("name", "")
+        return network.get("logo_path", "")
+    
+    def normalizeNetworkName(self, name=None):
+        fileExtension = os.path.splitext(self.logoPath)[1]
+        if name is None:
+            name = self.networkName
+        return name.lower().strip("(){}<>").replace(" ", "-") + fileExtension
 
     def getNetworkLogoFullPath(self, tmdbId):
         showId = self.getShowId(tmdbId)
-        logoPath = self.getNetworkLogoPath(str(showId))
-        if not logoPath:
+        self.logoPath = self.getNetworkLogoPath(str(showId))
+        if not self.logoPath:
             return None
-        return self.imageURL+"/"+self.imageSize+logoPath
+        return self.imageURL+"/"+self.imageSize+self.logoPath
 
-    def downloadImage(self, url, to):
+    def downloadImageIfNeeded(self, url, filename, path="networkImages/"):
+        filepath = path+filename
+        if os.path.isfile(filepath):
+            return
+        self.downloadImage(url, file, path)
+    
+    def downloadImage(self, url, filename, path):
+        filepath = path+filename
         img_data = requests.get(url).content
-        with open('image_name.jpg', 'wb') as handler:
+        with open(filepath, 'wb') as handler:
             handler.write(img_data)
