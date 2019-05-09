@@ -1,7 +1,6 @@
 #!/usr/bin/env python2.7
 
-from slack import Slack
-from slack import SlackMessage
+from slack import Slack, SlackMessage
 from sonarr import SonarrApi
 from tmdb import TmdbApi
 from tvmaze import TvMazeApi
