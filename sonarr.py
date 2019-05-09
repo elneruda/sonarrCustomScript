@@ -35,7 +35,7 @@ class SonarrApi:
     def setIndexer(self, episodeId, downloadId):
         if not episodeId or not downloadId:
             return
-        payload = {"apikey": self.apiKey, "episodeId": episodeId, "sortKey": "date"}
+        payload = {"apikey": self.apiKey, "episodeId": episodeId, "sortKey": "date", "sortDir": "desc"}
         response = requests.get(self.baseUrl + "/history", params=payload)
         if response.status_code != 200:
             raise ValueError(
@@ -47,9 +47,11 @@ class SonarrApi:
             record = dict(record)
             recordDownloadId = record.get("downloadId", None)
             if recordDownloadId == downloadId:
-                self.indexer = record.get("data", {}).get("indexer", "")
                 self.network = record.get("series", {}).get("network", "")
-                return
+                indexer = record.get("data", {}).get("indexer")
+                if indexer is not None:
+                    self.indexer = indexer
+                    return
 
     def loadData(self, seriesId, episodeFileId, downloadId):
         episodeId = self.getEpisodeId(seriesId, episodeFileId)
