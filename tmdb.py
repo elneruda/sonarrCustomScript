@@ -41,13 +41,17 @@ class TmdbApi:
             )
         data = dict(json.loads(response.text))
         network = dict(next(iter(data.get("networks", [])), None))
-        self.networkName = network.get("name", "")
-        return network.get("logo_path", "")
+        self.networkName = network.get("name")
+        return network.get("logo_path")
     
     def normalizeNetworkName(self, name=None):
-        fileExtension = os.path.splitext(self.logoPath)[1]
+        if not self.logoPath:
+            return
         if name is None:
             name = self.networkName
+            if name is None:
+                return
+        fileExtension = os.path.splitext(self.logoPath)[1]
         return name.lower().strip("(){}<>").replace(" ", "-") + fileExtension
 
     def getNetworkLogoFullPath(self, tmdbId):
@@ -58,6 +62,8 @@ class TmdbApi:
         return self.imageURL+"/"+self.imageSize+self.logoPath
 
     def downloadImageIfNeeded(self, url, filename, path="networkImages/"):
+        if url is None or filename is None:
+            return
         filepath = path+filename
         if os.path.isfile(filepath):
             return
