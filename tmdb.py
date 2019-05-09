@@ -61,10 +61,9 @@ class TmdbApi:
         filepath = path+filename
         if os.path.isfile(filepath):
             return
-        self.downloadImage(url, file, path)
+        self.downloadImage(url, filepath)
     
-    def downloadImage(self, url, filename, path):
-        filepath = path+filename
+    def downloadImage(self, url, filepath):
         img_data = requests.get(url).content
         with open(filepath, 'wb') as handler:
             handler.write(img_data)

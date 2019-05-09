@@ -4,10 +4,12 @@ from slack import Slack
 from slack import SlackMessage
 from sonarr import SonarrApi
 from tmdb import TmdbApi
+from tvmaze import TvMazeApi
 import json
 import requests
 import os
 import sys
+import argparse
 
 if len(sys.argv) < 5:
     print ("You must set arguments!!!")
@@ -17,28 +19,6 @@ webhook_url = sys.argv[1]
 sonarrApiBaseUrl = sys.argv[2]
 sonarrApiKey = sys.argv[3]
 tmdbApiKey = sys.argv[4]
-    
-class TvMazeApi:
-    baseUrl = ""
-
-    def __init__(self, tvmazeId):
-        if tvmazeId is None:
-            return
-        self.baseUrl = "http://api.tvmaze.com/shows/"+tvmazeId
-    
-    def getEpisodeUrl(self, season, number):
-        if not season or not number:
-            return ""
-        payload = {"season": season, "number": number}
-        response = requests.get(self.baseUrl + "/episodebynumber", params=payload)
-        if response.status_code != 200:
-            raise ValueError(
-                'Request to slack returned an error %s, the response is:\n%s'
-                % (response.status_code, response.text)
-            )
-        data = dict(json.loads(response.text))
-        return data.get("url", "")
-
 
 networkLogoUrl = None
 tmdb = TmdbApi(tmdbApiKey)
