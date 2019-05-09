@@ -8,23 +8,39 @@ from tvmaze import TvMazeApi
 import json
 import requests
 import os
-import sys
 import argparse
 
-if len(sys.argv) < 5:
-    print ("You must set arguments!!!")
-    exit()
+def _argparse():
+    parser = argparse.ArgumentParser(
+        description='Sonarr Custom Script : perform Slack rich notification'
+    )
+    parser.add_argument(
+        '--webhook-url', '-wu',
+        help='Slack webhook url'
+    )
+    parser.add_argument(
+        '--sonarr-url', '-se',
+        help='Sonarr API endpoint : https://xxxx/api'
+    )
+    parser.add_argument(
+        '--sonarr-key', '-sk',
+        help='Sonarr API key, find it on Sonarr > Settings > General'
+    )
+    parser.add_argument(
+        '--tmdb-key', '-tk',
+        help='TMDB API Key, register app on tmdb to obtain API Key'
+    )
+    args = parser.parse_args()
+    return args
 
-webhook_url = sys.argv[1]
-sonarrApiBaseUrl = sys.argv[2]
-sonarrApiKey = sys.argv[3]
-tmdbApiKey = sys.argv[4]
+
+args = _argparse()
 
 networkLogoUrl = None
-tmdb = TmdbApi(tmdbApiKey)
+tmdb = TmdbApi(args.tmdb_key)
 networkLogoUrl = tmdb.getNetworkLogoFullPath(os.environ.get("sonarr_series_tvdbid"))
 
-sonarr = SonarrApi(sonarrApiBaseUrl, sonarrApiKey)
+sonarr = SonarrApi(args.sonarr_url, args.sonarr_key)
 sonarr.loadData(os.environ.get("sonarr_series_id", ""), os.environ.get("sonarr_episodefile_id", ""), os.environ.get("sonarr_download_id", ""))
 
 networkName = tmdb.normalizeNetworkName(sonarr.network)
@@ -37,7 +53,7 @@ link = ""
 tvMaze = TvMazeApi(os.environ.get("sonarr_series_tvmazeid", ""))
 link = tvMaze.getEpisodeUrl(season, episode)
 
-message = SlackMessage(webhook_url)
+message = SlackMessage(args.webhook_url)
 message.package("*" +os.environ.get("sonarr_series_title", "") + " - " + season +"x"+ episode +" - " + os.environ.get("sonarr_episodefile_episodetitles", "") + "* ["+os.environ.get("sonarr_episodefile_quality", "")+"]")
 message.constructor("`"+ sonarr.indexer +"` _" + os.environ.get("sonarr_episodefile_releasegroup", "") + "_ " + sonarr.network)
 message.link(link)
