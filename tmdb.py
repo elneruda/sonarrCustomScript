@@ -52,7 +52,7 @@ class TmdbApi:
             if name is None:
                 return
         fileExtension = os.path.splitext(self.logoPath)[1]
-        return name.lower().strip("(){}<>").replace(" ", "-") + fileExtension
+        return name.lower().translate(None, "(){}<>").replace(" ", "-") + fileExtension
 
     def getNetworkLogoFullPath(self, tmdbId):
         showId = self.getShowId(tmdbId)
