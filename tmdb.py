@@ -61,10 +61,11 @@ class TmdbApi:
             return None
         return self.imageURL+"/"+self.imageSize+self.logoPath
 
-    def downloadImageIfNeeded(self, url, filename, path="networkImages/"):
+    def downloadImageIfNeeded(self, url, filename, relativePath="networkImages/"):
         if url is None or filename is None:
             return
-        filepath = path+str(filename)
+        absolutePath = os.getcwd() + "/" + relativePath
+        filepath = absolutePath+str(filename)
         if os.path.isfile(filepath):
             return
         self.downloadImage(url, filepath)
