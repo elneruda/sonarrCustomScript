@@ -64,7 +64,7 @@ class TmdbApi:
     def downloadImageIfNeeded(self, url, filename, relativePath="networkImages/"):
         if url is None or filename is None:
             return
-        absolutePath = os.getcwd() + "/" + relativePath
+        absolutePath = os.path.dirname(__file__) + "/" + relativePath
         filepath = absolutePath+str(filename)
         if os.path.isfile(filepath):
             return
