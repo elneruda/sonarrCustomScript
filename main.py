@@ -41,6 +41,7 @@ networkLogoUrl = tmdb.getNetworkLogoFullPath(os.environ.get("sonarr_series_tvdbi
 
 sonarr = SonarrApi(args.sonarr_url, args.sonarr_key)
 sonarr.loadData(os.environ.get("sonarr_series_id", ""), os.environ.get("sonarr_episodefile_id", ""), os.environ.get("sonarr_download_id", ""))
+sonarr.unmonitorMovieIfNeeded(os.environ.get("sonarr_eventtype"))
 
 networkName = tmdb.normalizeNetworkName(sonarr.network)
 tmdb.downloadImageIfNeeded(networkLogoUrl, networkName)

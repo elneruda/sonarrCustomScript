@@ -7,6 +7,7 @@ class SonarrApi:
 
     indexer = ""
     network = ""
+    episodeId = None
 
     def __init__(self, baseUrl, apiKey):
         self.baseUrl = baseUrl
@@ -53,8 +54,8 @@ class SonarrApi:
                     return
 
     def loadData(self, seriesId, episodeFileId, downloadId):
-        episodeId = self.getEpisodeId(seriesId, episodeFileId)
-        self.setIndexer(episodeId, downloadId)
+        self.episodeId = self.getEpisodeId(seriesId, episodeFileId)
+        self.setIndexer(self.episodeId, downloadId)
 
     def getWantedMissingEpisodes(self):
         payload = {"apikey": self.apiKey, "pageSize": 100, "sortKey": "series.title"}
@@ -84,3 +85,31 @@ class SonarrApi:
                 'Request to slack returned an error %s, the response is:\n%s'
                 % (response.status_code, response.text)
             )
+
+    def getEpisode(self):
+        if self.episodeId is None:
+            return {}
+        payload = {"apikey": self.apiKey}
+        response = requests.get(self.baseUrl + "/episode/" + str(self.episodeId), params=payload)
+        if response.status_code != 200:
+            raise ValueError(
+                'Request returned an error %s, the response is:\n%s'
+                % (response.status_code, response.text)
+            )
+        return json.loads(response.text)
+
+    def unmonitorEpisode(self, episode):
+        episode["monitored"] = False
+        headers = {'Content-type': 'application/json', 'X-Api-Key': self.apiKey}
+        response = requests.put(self.baseUrl + "/episode/" + str(episode["id"]), data=json.dumps(episode), headers=headers)
+        if response.status_code != 202:
+            raise ValueError(
+                'Request returned an error %s, the response is:\n%s'
+                % (response.status_code, response.text)
+            )
+
+    def unmonitorMovieIfNeeded(self, event):
+        if event == "Download":
+            episode = self.getEpisode()
+            if episode.get("monitored", False):
+                self.unmonitorEpisode(episode)
