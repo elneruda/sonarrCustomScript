@@ -55,7 +55,7 @@ link = tvMaze.getEpisodeUrl(season, episode)
 
 message = SlackMessage(args.webhook_url)
 message.package("*" +os.environ.get("sonarr_series_title", "") + " - " + season +"x"+ episode +" - " + os.environ.get("sonarr_episodefile_episodetitles", "") + "* ["+os.environ.get("sonarr_episodefile_quality", "")+"]")
-message.constructor("`"+ sonarr.indexer +"` _" + os.environ.get("sonarr_episodefile_releasegroup", "") + "_ " + sonarr.network)
+message.constructor("`"+ sonarr.indexer +"` _" + os.environ.get("sonarr_episodefile_releasegroup", "") + "_ (" + sonarr.sizeOnDisk+")")
 message.link(link)
 message.iconUrl = networkLogoUrl
 message.save()

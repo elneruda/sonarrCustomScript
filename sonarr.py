@@ -7,6 +7,7 @@ class SonarrApi:
 
     indexer = ""
     network = ""
+    sizeOnDisk = ""
     episodeId = None
 
     def __init__(self, baseUrl, apiKey):
@@ -49,8 +50,10 @@ class SonarrApi:
             if recordDownloadId == downloadId:
                 self.network = record.get("series", {}).get("network", "")
                 indexer = record.get("data", {}).get("indexer")
+                size = int(record.get("data", {}).get("size", "0"))
                 if indexer is not None:
-                    self.indexer = indexer
+                    self.indexer = str(indexer)
+                    self.sizeOnDisk = self.sizeof_fmt(size)
                     return
 
     def loadData(self, seriesId, episodeFileId, downloadId):
@@ -113,3 +116,10 @@ class SonarrApi:
             episode = self.getEpisode()
             if episode.get("monitored", False):
                 self.unmonitorEpisode(episode)
+
+    def sizeof_fmt(self, num, suffix='o'):
+        for unit in ['','K','M','G','T','P','E','Z']:
+            if abs(num) < 1024.0:
+                return "%3.1f%s%s" % (num, unit, suffix)
+            num /= 1024.0
+        return "%.1f%s%s" % (num, 'Y', suffix)
