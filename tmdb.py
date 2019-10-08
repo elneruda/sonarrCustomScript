@@ -44,14 +44,16 @@ class TmdbApi:
         self.networkName = network.get("name")
         return network.get("logo_path")
     
-    def normalizeNetworkName(self, name=None):
+    def normalizeNetworkName(self, name=None, withExtension=True):
         if not self.logoPath:
             return
         if name is None:
             name = self.networkName
             if name is None:
                 return
-        fileExtension = os.path.splitext(self.logoPath)[1]
+        fileExtension = ""
+        if (withExtension):
+            fileExtension = os.path.splitext(self.logoPath)[1]
         return str(name).lower().translate(None, "(){}<>[]").replace(" ", "-") + fileExtension
 
     def getNetworkLogoFullPath(self, tmdbId):
@@ -63,12 +65,13 @@ class TmdbApi:
 
     def downloadImageIfNeeded(self, url, filename, relativePath="networkImages/"):
         if url is None or filename is None:
-            return
+            return None
         absolutePath = os.path.dirname(__file__) + "/" + relativePath
         filepath = absolutePath+str(filename)
         if os.path.isfile(filepath):
-            return
+            return ":" + self.normalizeNetworkName(withExtension=False) + ":"
         self.downloadImage(url, filepath)
+        return None
     
     def downloadImage(self, url, filepath):
         img_data = requests.get(url).content

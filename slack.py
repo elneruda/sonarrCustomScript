@@ -8,9 +8,11 @@ class Slack:
     def __init__(self, baseUrl):
         self.baseUrl = baseUrl
 
-    def notify(self, message, iconUrl=None):
+    def notify(self, message, iconUrl=None, iconEmoji=None):
         payload={"text": message, "unfurl_links": True, "mrkdwn": True}
-        if (iconUrl is not None):
+        if (iconEmoji is not None):
+            payload["icon_emoji"] = iconEmoji
+        elif (iconUrl is not None):
             payload["icon_url"] = iconUrl
         jsonData = json.dumps(payload)
         response = requests.post(
@@ -33,6 +35,7 @@ class SlackMessage(object):
     _constructor = ":male-construction-worker: "
     _link = ":books: "
     iconUrl = None
+    iconEmoji = None
 
     _message = []
 
@@ -61,4 +64,4 @@ class SlackMessage(object):
         self._link+=value
 
     def notify(self):
-        Slack(self._webhookUrl).notify(str(self), self.iconUrl)
+        Slack(self._webhookUrl).notify(str(self), self.iconUrl, self.iconEmoji)

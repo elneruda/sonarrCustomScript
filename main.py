@@ -44,7 +44,7 @@ sonarr.loadData(os.environ.get("sonarr_series_id", ""), os.environ.get("sonarr_e
 sonarr.unmonitorMovieIfNeeded(os.environ.get("sonarr_eventtype"))
 
 networkName = tmdb.normalizeNetworkName(sonarr.network)
-tmdb.downloadImageIfNeeded(networkLogoUrl, networkName)
+networkLogoEmoji = tmdb.downloadImageIfNeeded(networkLogoUrl, networkName)
 
 season = os.environ.get("sonarr_episodefile_seasonnumber", "")
 episode = os.environ.get("sonarr_episodefile_episodenumbers", "")
@@ -58,6 +58,7 @@ message.package("*" +os.environ.get("sonarr_series_title", "") + " - " + season 
 message.constructor("`"+ sonarr.indexer +"` _" + os.environ.get("sonarr_episodefile_releasegroup", "") + "_ (" + sonarr.sizeOnDisk+")")
 message.link(link)
 message.iconUrl = networkLogoUrl
+message.iconEmoji = networkLogoEmoji
 message.save()
 
 message.notify()
