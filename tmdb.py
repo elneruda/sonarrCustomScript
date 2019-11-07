@@ -51,6 +51,8 @@ class TmdbApi:
             name = self.networkName
             if name is None:
                 return
+        if name == "abc":
+            name = "abc-original"
         fileExtension = ""
         if (withExtension):
             fileExtension = os.path.splitext(self.logoPath)[1]
