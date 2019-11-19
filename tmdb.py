@@ -51,7 +51,7 @@ class TmdbApi:
             name = self.networkName
             if name is None:
                 return
-        if name == "abc":
+        if name.lower() == "abc":
             name = "abc-original"
         fileExtension = ""
         if (withExtension):
